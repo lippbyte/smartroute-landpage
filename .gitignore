@@ -1,0 +1,6 @@
+# Dokumen internal: semua markdown kecuali README
+*.md
+!README.md
+
+# Aset desain internal
+assets/pallet.png

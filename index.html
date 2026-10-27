@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="id" data-intro="on">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartRoute AI — Rute Transportasi Umum Jakarta yang Lebih Pasti</title>
+  <meta name="description" content="SmartRoute AI: rekomendasi rute transportasi umum Jakarta dengan rentang waktu tempuh yang realistis, risiko berpindah yang terukur, dan asisten chat wayfinding. Karya Team Problem Solver.">
+  <meta name="theme-color" content="#001A42">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="id_ID">
+  <meta property="og:site_name" content="SmartRoute AI">
+  <meta property="og:title" content="SmartRoute AI — Navigate Smarter. Travel Better.">
+  <meta property="og:description" content="Rekomendasi rute transportasi umum Jakarta dengan rentang waktu tempuh yang realistis dan risiko berpindah yang terukur. Tonton video promosinya.">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="SmartRoute AI — Navigate Smarter. Travel Better.">
+  <meta name="twitter:description" content="Rekomendasi rute transportasi umum Jakarta dengan rentang waktu tempuh yang realistis dan risiko berpindah yang terukur.">
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400..800&display=swap">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preload" as="image" type="image/webp" href="assets/jakarta-bg-mobile.webp" media="(max-width: 900px)">
+  <link rel="preload" as="image" type="image/webp" href="assets/jakarta-bg.webp" media="(min-width: 901px)">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    /* "js" selalu; "anim" hanya bila gerak diizinkan. Intro sekali per sesi
+       (matikan dengan data-intro="off" pada <html>). Failsafe 3 detik membuka
+       halaman bila pustaka animasi gagal dimuat. */
+    (function (h) {
+      h.classList.add("js");
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      h.classList.add("anim");
+      try {
+        if (h.getAttribute("data-intro") !== "off" && !sessionStorage.getItem("sr-intro")) h.classList.add("intro-pending");
+      } catch (e) {}
+      setTimeout(function () {
+        if (!h.classList.contains("anim-ready")) h.classList.remove("anim", "intro-pending");
+      }, 3000);
+    })(document.documentElement);
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer fetchpriority="low"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer fetchpriority="low"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer fetchpriority="low"></script>
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#konten">Langsung ke konten</a>
+  <div class="bg-base" aria-hidden="true"></div>
+  <div class="bg-photo" aria-hidden="true"></div>
+  <div class="scroll-progress" aria-hidden="true"></div>
+
+  <!-- 1. Navigasi -->
+  <header class="site-header" id="top">
+    <nav class="nav container" aria-label="Navigasi utama">
+      <a class="nav__brand" href="#top">SmartRoute</a>
+      <ul class="nav__links" id="nav-links" role="list">
+        <li><a href="#masalah">Masalah</a></li>
+        <li><a href="#fitur">Fitur</a></li>
+        <li><a href="#cara-kerja">Cara Kerja</a></li>
+        <li><a href="#video">Video</a></li>
+        <li><a href="#tim">Tim</a></li>
+      </ul>
+      <div class="nav__actions">
+        <a class="btn btn--primary btn--sm" href="#video">Video Promosi</a>
+        <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Buka menu">
+          <svg class="icon icon--menu" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 8h16M4 16h16"/></svg>
+          <svg class="icon icon--close" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="konten">
+
+    <!-- 2. Hero: logo + tagline di atas peta transit dekoratif -->
+    <div class="hero-wrap">
+    <svg class="hero-lines" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+      <g class="hero-lines__group">
+        <path class="hero-lines__path" style="stroke:var(--teal)" pathLength="1" d="M-40 40H700L780 -40"/>
+        <path class="hero-lines__path" style="stroke:var(--blue-l)" pathLength="1" d="M-40 120H200L280 200V760L360 840H1480"/>
+        <path class="hero-lines__path" style="stroke:var(--green-m)" pathLength="1" d="M1480 90H1240L1180 150V500L1240 560H1480"/>
+        <path class="hero-lines__path" style="stroke:var(--red)" pathLength="1" d="M-40 470H200L280 550V940"/>
+        <path class="hero-lines__path" style="stroke:var(--purple)" pathLength="1" d="M1240 -40V260L1320 340H1480"/>
+        <path class="hero-lines__path" style="stroke:var(--orange)" pathLength="1" d="M560 940V880L640 800H1000L1080 880V940"/>
+        <circle class="hero-lines__stop" cx="200" cy="120" r="8"/>
+        <circle class="hero-lines__stop is-pulse" cx="280" cy="480" r="8"/>
+        <circle class="hero-lines__stop" cx="360" cy="840" r="8"/>
+        <circle class="hero-lines__stop" cx="1240" cy="90" r="8"/>
+        <circle class="hero-lines__stop is-pulse" cx="1180" cy="330" r="8"/>
+        <circle class="hero-lines__stop" cx="1240" cy="560" r="8"/>
+        <circle class="hero-lines__stop" cx="200" cy="470" r="8"/>
+        <circle class="hero-lines__stop" cx="1240" cy="180" r="8"/>
+        <circle class="hero-lines__stop" cx="1320" cy="340" r="8"/>
+        <circle class="hero-lines__stop is-pulse" cx="820" cy="800" r="8"/>
+        <circle class="hero-lines__stop" cx="700" cy="40" r="8"/>
+      </g>
+    </svg>
+    <section class="hero container" aria-labelledby="hero-title">
+      <h1 class="hero__title" id="hero-title">
+        <span class="logo-box hero__logo-box">
+          <img class="hero__logo" src="assets/logotransparan.png" width="1080" height="1350"
+               alt="SmartRoute" fetchpriority="high">
+        </span>
+        <span class="hero__tagline">Navigate <span class="hl">Smarter.</span> Travel Better.</span>
+      </h1>
+
+      <div class="hero__meta">
+        <p class="hero__lead">Rekomendasi rute transportasi umum Jakarta dengan rentang waktu tempuh yang realistis dan risiko berpindah yang terukur.</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#video">
+            Tonton Video Promosi
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+          </a>
+          <a class="btn btn--ghost" href="#fitur">Lihat Fitur</a>
+        </div>
+      </div>
+    </section>
+    </div>
+
+    <!-- Pita berjalan (dekoratif; isinya sudah ada di bagian lain halaman) -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <ul class="marquee__group">
+          <li>Rentang ETA</li><li>Risiko berpindah</li><li>Asisten chat</li><li>GTFS</li><li>OpenTripPlanner</li><li>Pengguna rutin</li><li>Pengguna baru</li>
+          <li>Rentang ETA</li><li>Risiko berpindah</li><li>Asisten chat</li><li>GTFS</li><li>OpenTripPlanner</li><li>Pengguna rutin</li><li>Pengguna baru</li>
+        </ul>
+        <ul class="marquee__group">
+          <li>Rentang ETA</li><li>Risiko berpindah</li><li>Asisten chat</li><li>GTFS</li><li>OpenTripPlanner</li><li>Pengguna rutin</li><li>Pengguna baru</li>
+          <li>Rentang ETA</li><li>Risiko berpindah</li><li>Asisten chat</li><li>GTFS</li><li>OpenTripPlanner</li><li>Pengguna rutin</li><li>Pengguna baru</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Masalah -->
+    <section class="section container" id="masalah" aria-labelledby="masalah-title">
+      <header class="section__head">
+        <p class="eyebrow">Masalah</p>
+        <h2 class="display" id="masalah-title">Jakarta punya transportasi umum. Yang kurang: <span class="hl">kepastian.</span></h2>
+      </header>
+
+      <ul class="stats" role="list">
+        <li class="card stat">
+          <p class="stat__num"><span class="count" data-count="700">700</span> ribu</p>
+          <span class="stat__bar" aria-hidden="true"></span>
+          <p class="stat__text">Pengguna harian TransJakarta, MRT, dan LRT, baru sekitar 6% populasi Jakarta.</p>
+          <p class="label stat__src">Sumber: BPS DKI Jakarta via DPRD DKI, Juli 2026</p>
+        </li>
+        <li class="card stat">
+          <p class="stat__num"><span class="count" data-count="20">20</span>-<span class="count" data-count="30">30</span> menit</p>
+          <span class="stat__bar" aria-hidden="true"></span>
+          <p class="stat__text">Waktu tunggu yang dialami pengguna rutin pada jam sibuk.</p>
+          <p class="label stat__src">Sumber: proposal tim</p>
+        </li>
+        <li class="card stat">
+          <p class="stat__num"><span class="count" data-count="17.8" data-decimals="1">17,8</span> km/jam</p>
+          <span class="stat__bar" aria-hidden="true"></span>
+          <p class="stat__text">Kecepatan rata-rata saat jam sibuk, jadi waktu tiba sulit ditebak.</p>
+          <p class="label stat__src">Sumber: TomTom Traffic Index 2025</p>
+        </li>
+        <li class="card stat">
+          <p class="stat__num"><span class="count" data-count="2.4" data-decimals="1">2,4</span>-<span class="count" data-count="4.2" data-decimals="1">4,2</span>x</p>
+          <span class="stat__bar" aria-hidden="true"></span>
+          <p class="stat__text">Pengguna rutin di Jakarta lebih sensitif pada waktu tunggu dibanding waktu di dalam kendaraan.</p>
+          <p class="label stat__src">Sumber: Kreindler dkk., 2023</p>
+        </li>
+      </ul>
+
+      <p class="section__note">Rute sudah tersedia. Tapi, apakah perjalananmu akan berjalan sesuai rencana?</p>
+    </section>
+
+    <!-- 4. Fitur -->
+    <section class="section container" id="fitur" aria-labelledby="fitur-title">
+      <header class="section__head">
+        <p class="eyebrow">Fitur</p>
+        <h2 class="display" id="fitur-title">Lima hal yang dijawab SmartRoute.</h2>
+      </header>
+
+      <div class="bento">
+        <article class="card feature feature--1">
+          <div class="feature__top">
+            <span class="label">01</span>
+            <svg class="icon feature__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+          </div>
+          <h3 class="title">Rentang ETA yang jujur.</h3>
+          <p class="feature__text">“22-31 menit”, bukan satu angka yang seolah pasti. Anda tahu skenario terbaik dan terburuk.</p>
+        </article>
+
+        <article class="card feature feature--2">
+          <div class="feature__top">
+            <span class="label">02</span>
+            <svg class="icon feature__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 8h14m-4-4 4 4-4 4M20 16H6m4-4-4 4 4 4"/></svg>
+          </div>
+          <h3 class="title">Risiko berpindah.</h3>
+          <p class="feature__text">Setiap titik pindah moda diberi level rendah, sedang, atau tinggi, dihitung dari jarak antar kedatangan (headway) data jadwal GTFS.</p>
+          <ul class="levels" role="list" aria-label="Level risiko berpindah">
+            <li class="badge badge--low">Rendah</li>
+            <li class="badge badge--mid">Sedang</li>
+            <li class="badge badge--high">Tinggi</li>
+          </ul>
+        </article>
+
+        <figure class="routecard" aria-label="Ilustrasi tampilan rute di aplikasi SmartRoute">
+          <div class="phone">
+            <div class="phone__screen">
+              <div class="phone__status" aria-hidden="true"><span>07:45</span><i class="phone__island"></i><i class="phone__battery"></i></div>
+              <p class="routecard__top"><span class="label">Opsi 1 dari 3</span></p>
+
+              <div class="routecard__trip">
+                <p class="routecard__place"><span class="label">Asal</span>Blok M</p>
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+                <p class="routecard__place"><span class="label">Tujuan</span>Kota</p>
+              </div>
+
+              <div class="routecard__eta">
+                <p class="routecard__range"><span class="routecard__num"><span class="count" data-count="22">22</span>-<span class="count" data-count="31">31</span></span> <span class="routecard__unit">mnt</span></p>
+                <p class="label">Rentang waktu tempuh</p>
+              </div>
+
+              <ol class="routeline" role="list" aria-label="Urutan perjalanan">
+                <li class="routeline__stop routeline__stop--end">
+                  <span class="routeline__name">Blok M</span>
+                  <span class="routeline__meta">Berangkat</span>
+                </li>
+                <li class="routeline__stop">
+                  <span class="routeline__name">Berpindah 1</span>
+                  <span class="routeline__meta">Tunggu 3-6 mnt</span>
+                  <span class="badge badge--low"><span class="visually-hidden">Risiko </span>Rendah</span>
+                </li>
+                <li class="routeline__stop">
+                  <span class="routeline__name">Berpindah 2</span>
+                  <span class="routeline__meta">Tunggu 6-12 mnt</span>
+                  <span class="badge badge--mid"><span class="visually-hidden">Risiko </span>Sedang</span>
+                </li>
+                <li class="routeline__stop routeline__stop--end">
+                  <span class="routeline__name">Kota</span>
+                  <span class="routeline__meta">Tiba</span>
+                </li>
+              </ol>
+            </div>
+          </div>
+        </figure>
+
+        <article class="card feature feature--3">
+          <div class="feature__top">
+            <span class="label">03</span>
+            <svg class="icon feature__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v11h-9l-5 4v-4H4z"/></svg>
+          </div>
+          <h3 class="title">Asisten chat wayfinding.</h3>
+          <p class="feature__text">Tanya dengan bahasa sehari-hari, misalnya “dari Blok M ke Kota naik apa?”, dan dapat jawaban yang bersumber dari data rute yang sama.</p>
+        </article>
+
+        <article class="card feature feature--4">
+          <div class="feature__top">
+            <span class="label">04</span>
+            <svg class="icon feature__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8.5" cy="8" r="3"/><circle cx="16.5" cy="9" r="2.5"/><path d="M3 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5M15 14.1c.5-.1 1-.1 1.5-.1 2.3 0 4 1.5 4.5 4"/></svg>
+          </div>
+          <h3 class="title">Pengguna Rutin dan Pengguna Baru.</h3>
+          <p class="feature__text">Pengguna Rutin mendapat ringkasan cepat. Pengguna Baru mendapat panduan langkah demi langkah dengan istilah yang dijelaskan.</p>
+        </article>
+
+        <article class="card feature feature--5">
+          <div class="feature__top">
+            <span class="label">05</span>
+            <svg class="icon feature__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 19v-4M10 19v-7M15 19V9M20 19V5"/></svg>
+          </div>
+          <h3 class="title">Laporan kepadatan halte.</h3>
+          <p class="feature__text">Satu ketukan: penuh, sedang, atau lengang. Laporan langsung memengaruhi tampilan.</p>
+          <ul class="levels" role="list" aria-label="Pilihan laporan kepadatan">
+            <li class="badge badge--plain">Penuh</li>
+            <li class="badge badge--plain">Sedang</li>
+            <li class="badge badge--plain">Lengang</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- 5. Cara kerja: lembar terang seperti bottom sheet aplikasi -->
+    <section class="howto sheet" id="cara-kerja" aria-labelledby="cara-kerja-title">
+      <div class="container">
+        <header class="section__head">
+          <p class="eyebrow">Cara kerja</p>
+          <h2 class="display" id="cara-kerja-title">Tiga langkah, tanpa instal.</h2>
+        </header>
+
+        <ol class="steps" role="list">
+          <li class="step">
+            <span class="step__num" aria-hidden="true">01</span>
+            <h3 class="title">Masukkan asal dan tujuan.</h3>
+            <p class="step__text">Autocomplete tempat umum, hasil muncul cepat.</p>
+          </li>
+          <li class="step">
+            <span class="step__num" aria-hidden="true">02</span>
+            <h3 class="title">Baca rentang waktu dan risiko.</h3>
+            <p class="step__text">Bandingkan 2-3 opsi rute berdasarkan waktu, biaya, dan berapa kali berpindah.</p>
+          </li>
+          <li class="step">
+            <span class="step__num" aria-hidden="true">03</span>
+            <h3 class="title">Ikuti panduan langkah demi langkah.</h3>
+            <p class="step__text">Tanya asisten kapan pun bingung.</p>
+          </li>
+        </ol>
+
+        <div class="pipeline">
+          <p class="eyebrow" id="pipeline-title">Alur data</p>
+          <ol class="pipeline__list" role="list" aria-labelledby="pipeline-title">
+            <li><span class="pipeline__box">GTFS TransJakarta</span><span class="pipeline__link" aria-hidden="true"><i></i><i></i></span></li>
+            <li><span class="pipeline__box">OpenTripPlanner</span><span class="pipeline__link" aria-hidden="true"><i></i><i></i></span></li>
+            <li><span class="pipeline__box">Mesin skoring risiko</span><span class="pipeline__link" aria-hidden="true"><i></i><i></i></span></li>
+            <li><span class="pipeline__box">Antarmuka + Asisten chat</span></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Video promosi -->
+    <section class="section container" id="video" aria-labelledby="video-title">
+      <header class="section__head section__head--center">
+        <p class="eyebrow">Video promosi</p>
+        <h2 class="display" id="video-title">Kenali SmartRoute dalam satu video.</h2>
+        <p class="lead">Dari masalah transportasi umum Jakarta sampai cara SmartRoute membantu Anda merencanakan perjalanan.</p>
+      </header>
+
+      <div class="video-stage">
+        <div class="video" data-video>
+          <video class="video__player" controls preload="none" playsinline
+                 poster="assets/video-poster.jpg" aria-label="Video promosi SmartRoute AI">
+            <source src="assets/Final%20Vidio%20Smart%20Route%20AI.mp4" type="video/mp4">
+            Browser Anda tidak dapat memutar video ini.
+            <a href="assets/Final%20Vidio%20Smart%20Route%20AI.mp4">Unduh video promosi</a>.
+          </video>
+          <p class="video__fallback" hidden>
+            <svg class="icon icon--lg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l5.5-3.5z"/></svg>
+            <span class="label">Video tidak dapat diputar di browser ini</span>
+            <a class="video__download" href="assets/Final%20Vidio%20Smart%20Route%20AI.mp4">Unduh video (MP4)</a>
+          </p>
+        </div>
+      </div>
+
+      <template id="video-play-template">
+        <button class="video__play" type="button" aria-label="Putar video · 2:10, video promosi SmartRoute">
+          <span class="video__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false"><path d="M8.5 5.5v13l10.5-6.5z"/></svg>
+          </span>
+          <span class="video__cta" aria-hidden="true">Putar video · 2:10</span>
+        </button>
+      </template>
+    </section>
+
+    <!-- 7. Dua pengguna -->
+    <section class="section container" id="pengguna" aria-labelledby="pengguna-title">
+      <header class="section__head">
+        <p class="eyebrow">Pengguna</p>
+        <h2 class="display" id="pengguna-title">Dibuat untuk dua jenis perjalanan.</h2>
+      </header>
+
+      <div class="personas">
+        <article class="card persona">
+          <span class="tag tag--blue">Pengguna Rutin</span>
+          <h3 class="title">Rina, pengguna rutin.</h3>
+          <figure class="persona__quote">
+            <figcaption class="label">Persona</figcaption>
+            <blockquote><p>“Saya ingin tahu seberapa mepet jadwalku, dan apakah perlu berangkat lebih awal.”</p></blockquote>
+          </figure>
+          <div class="persona__gets">
+            <p class="label">Mendapat</p>
+            <ul class="chips" role="list">
+              <li>Rentang ETA</li>
+              <li>Risiko berpindah</li>
+              <li>Perbandingan opsi rute</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="card persona">
+          <span class="tag tag--orange">Pengguna Baru</span>
+          <h3 class="title">Alex, baru pertama kali ke Jakarta.</h3>
+          <figure class="persona__quote">
+            <figcaption class="label">Persona</figcaption>
+            <blockquote><p>“Saya tidak paham istilah halte dan koridor.”</p></blockquote>
+          </figure>
+          <div class="persona__gets">
+            <p class="label">Mendapat</p>
+            <ul class="chips" role="list">
+              <li>Panduan langkah demi langkah</li>
+              <li>Asisten chat</li>
+              <li>Panduan berbasis ikon</li>
+              <li>Estimasi biaya di depan</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 8. Posisi kami -->
+    <section class="section container" id="posisi" aria-labelledby="posisi-title">
+      <header class="section__head">
+        <p class="eyebrow">Posisi kami</p>
+        <h2 class="display" id="posisi-title">Melangkah lebih jauh dari sekadar informasi rute.</h2>
+        <p class="lead">SmartRoute AI menghadirkan pendekatan pelengkap yang membantu pengguna memahami perjalanan, mengantisipasi perpindahan kendaraan, dan memilih rute sesuai kebutuhan mereka.</p>
+      </header>
+
+      <div class="card compare">
+        <table>
+          <caption class="visually-hidden">Perbandingan fokus aplikasi transportasi resmi dan fokus SmartRoute AI</caption>
+          <thead>
+            <tr>
+              <th scope="col"><span class="label">Fokus aplikasi transportasi resmi</span></th>
+              <th scope="col"><span class="tag tag--solid">Fokus SmartRoute AI</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Jadwal, rute, dan tarif dasar</td>
+              <td>Ketidakpastian: rentang ETA dan risiko berpindah</td>
+            </tr>
+            <tr>
+              <td>Informasi umum untuk semua pengguna</td>
+              <td>Panduan yang menyesuaikan pengguna rutin atau pengguna baru</td>
+            </tr>
+            <tr>
+              <td>Pencarian rute</td>
+              <td>Tanya-jawab wayfinding dengan bahasa sehari-hari</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 9. Peta jalan: digambar sebagai jalur kereta -->
+    <section class="section container" id="peta-jalan" aria-labelledby="peta-jalan-title">
+      <header class="section__head">
+        <p class="eyebrow">Peta jalan</p>
+        <h2 class="display" id="peta-jalan-title">Dari MVP ke Jakarta yang lebih pasti.</h2>
+      </header>
+
+      <div class="roadmap">
+        <div class="roadmap__track" aria-hidden="true"><span class="roadmap__fill"></span><span class="roadmap__train"><i></i></span></div>
+        <article class="card phase phase--now">
+          <span class="roadmap__here">Kita di sini</span>
+          <div class="phase__head">
+            <h3 class="tag tag--green">Sekarang</h3>
+            <span class="label">01</span>
+          </div>
+          <ul class="phase__list" role="list">
+            <li>TransJakarta penuh</li>
+            <li>Rentang ETA</li>
+            <li>Risiko berpindah heuristik</li>
+            <li>Asisten chat</li>
+            <li>Laporan kepadatan</li>
+          </ul>
+        </article>
+
+        <article class="card phase phase--next">
+          <div class="phase__head">
+            <h3 class="tag tag--outline">Berikutnya</h3>
+            <span class="label">02</span>
+          </div>
+          <ul class="phase__list" role="list">
+            <li>MRT satu jalur (Lebak Bulus-Bundaran HI)</li>
+            <li>UI dwibahasa</li>
+            <li>Perbandingan biaya dan emisi CO<sub>2</sub></li>
+            <li>Preferensi rute malam hari</li>
+          </ul>
+        </article>
+
+        <article class="card phase phase--target">
+          <div class="phase__head">
+            <h3 class="tag tag--dashed">Target</h3>
+            <span class="label">03</span>
+          </div>
+          <ul class="phase__list" role="list">
+            <li>Data posisi armada real-time (menunggu ketersediaan dari Dishub/operator)</li>
+            <li>Model prediksi terlatih</li>
+            <li>Integrasi LRT/KRL/JakLingko</li>
+            <li>Integrasi sebagai modul JAKI</li>
+          </ul>
+        </article>
+      </div>
+
+      <p class="label roadmap__note">Item berlabel Target bergantung pada ketersediaan data resmi dan belum menjadi bagian prototipe.</p>
+    </section>
+
+    <!-- 10. Tim -->
+    <section class="section container" id="tim" aria-labelledby="tim-title">
+      <header class="section__head">
+        <p class="eyebrow">Tim</p>
+        <h2 class="display" id="tim-title">Team Problem Solver.</h2>
+      </header>
+
+      <ul class="team" role="list">
+        <li class="card member">
+          <span class="member__avatar" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="8" r="4.2"/><path d="M3.8 20.5c.6-4.2 4-7 8.2-7s7.6 2.8 8.2 7z"/></svg></span>
+          <div>
+            <p class="member__name">Hasby Wira Al Muflih</p>
+            <p class="member__role">Ketua Tim</p>
+          </div>
+        </li>
+        <li class="card member">
+          <span class="member__avatar" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="8" r="4.2"/><path d="M3.8 20.5c.6-4.2 4-7 8.2-7s7.6 2.8 8.2 7z"/></svg></span>
+          <div>
+            <p class="member__name">Amelia Cahya Anggraeni</p>
+            <p class="member__role">UI/UX Designer</p>
+          </div>
+        </li>
+        <li class="card member">
+          <span class="member__avatar" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="8" r="4.2"/><path d="M3.8 20.5c.6-4.2 4-7 8.2-7s7.6 2.8 8.2 7z"/></svg></span>
+          <div>
+            <p class="member__name">Bayu Indra Pratama</p>
+            <p class="member__role">AI/ML Engineer</p>
+          </div>
+        </li>
+        <li class="card member">
+          <span class="member__avatar" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="8" r="4.2"/><path d="M3.8 20.5c.6-4.2 4-7 8.2-7s7.6 2.8 8.2 7z"/></svg></span>
+          <div>
+            <p class="member__name">Rakkan Shaka Raufa</p>
+            <p class="member__role">UI/UX Designer &amp; AI/ML Engineer</p>
+          </div>
+        </li>
+        <li class="card member">
+          <span class="member__avatar" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="8" r="4.2"/><path d="M3.8 20.5c.6-4.2 4-7 8.2-7s7.6 2.8 8.2 7z"/></svg></span>
+          <div>
+            <p class="member__name">M. Khalifa Aisy Hafiy</p>
+            <p class="member__role">Backend &amp; Data Engineer</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 11. Penutup -->
+    <section class="closing" aria-labelledby="penutup-title">
+      <div class="container closing__inner">
+        <h2 class="display display--xl" id="penutup-title">Siap lihat Jakarta dengan <span class="hl">cara baru?</span></h2>
+        <div class="closing__actions">
+          <a class="btn btn--light" href="#video">
+            Tonton Video Promosi
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+          </a>
+          <p class="closing__contact">
+            <span class="label">Kontak tim</span>
+            <span class="highlight" data-kontak>hasbywiraalmuflih9@gmail.com</span>
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="footer__brand">SmartRoute AI · Team Problem Solver</p>
+      <p class="footer__note">SmartRoute AI merupakan prototipe inovasi mobilitas cerdas yang dikembangkan untuk tujuan eksplorasi dan pengembangan konsep.</p>
+      <!-- Kredit foto latar (isi bila lisensi foto mensyaratkannya):
+      <p class="label">Foto latar: Nama Fotografer / Unsplash</p> -->
+    </div>
+  </footer>
+</body>
+</html>
